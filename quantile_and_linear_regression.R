@@ -121,27 +121,39 @@ for(id in twoEyesIDs){
 CH_lm <- lm(SER ~ scale(CH) + scale(meanCornealRadius) + scale(IOP) + scale(age) + factor(sex), d)
 CRF_lm <- lm(SER ~ scale(CRF) + scale(meanCornealRadius) + scale(IOP) + scale(age) + factor(sex), d)
 
+# Very strong correlation between (pearson's r: 0.84), so the diagnostic plots are the same for both models
+cor.test(d$CH, d$CRF)
+
 ############################# Residual analysis: diagnostic plots ###########################
 fg_col <- rgb(0.8,0.4,0, alpha=0.03)
 my_theme <- theme_wsj() + theme(plot.subtitle=element_text(size=10, hjust=1), 
                                 plot.background=element_rect(fill=fg_col),
                                 panel.background=element_rect(fill=fg_col)) 
-# Normal Q-Q plot
+## Normal Q-Q plot
+# CH
 p1 <- gg_qqplot(CH_lm) + labs(title="", subtitle="Normal Q-Q plot") + my_theme + theme(plot.margin = unit(c(1,0.5,3,1), 'lines'))
+# CRF
 p2 <- gg_qqplot(CRF_lm) + labs(title="", subtitle="Normal Q-Q plot") + my_theme + theme(plot.margin = unit(c(1,0.5,3,1), 'lines'))
-# Residuals vs Fitted plot
+## Residuals vs Fitted plot
+# CH
 p3 <- gg_resfitted(CH_lm) + labs(title="", subtitle="Residuals vs fitted plot", x="", y="") + my_theme + ylim(-15, 5) + 
-  scale_x_continuous(breaks=seq(0,-4, -1), labels=seq(0,-4,-1) ) + theme(plot.margin = unit(c(1,0.5,3,0.5), 'lines'))
+  scale_x_continuous(breaks=seq(0,-4, -0.5), labels=seq(0,-4,-0.5) ) + theme(plot.margin = unit(c(1,0.5,3,0.5), 'lines'))
+# CRF
 p4 <- gg_resfitted(CRF_lm) + labs(title="", subtitle="Residuals vs fitted plot", x="", y="") + my_theme + ylim(-15, 5) + 
-  scale_x_continuous(breaks=seq(0,-4,-1), labels=seq(0,-4,-1) ) + theme(plot.margin = unit(c(1,0.5,3,0.5), 'lines'))
-# Combine plots 
-ggarrange(p1, p3, p2, p4, hjust=-0.05,
-          ncol = 2, nrow = 2,
-          font.label = list(size=12),
-          labels = c("Corneal hysteresis (CH) OLS model:", "", "Corneal resistance factor (CRF) OLS model:", ""))
-# Save combined plot
-ggsave("figures/cornea_biomechanics_lm_residual.png", width=8, height=7.5, units="in", bg="white")
+  scale_x_continuous(breaks=seq(0,-4,-0.5), labels=seq(0,-4,-0.5) ) + theme(plot.margin = unit(c(1,0.5,3,0.5), 'lines'))
 
+# # Combine plots 
+# ggarrange(p1, p3, p2, p4, hjust=-0.05,
+#           ncol = 2, nrow = 2,
+#           font.label = list(size=12),
+#           labels = c("Corneal hysteresis (CH) OLS model:", "", "Corneal resistance factor (CRF) OLS model:", ""))
+ggarrange(p1, p3, hjust=-0.05,
+          ncol = 2, nrow = 1,
+          font.label = list(size=12),
+          labels = c("Ordinary least squares (linear) model:"))
+
+# Save combined plot
+ggsave("figures/cornea_biomechanics_lm_residual.png", width=8, height=4.5, units="in", bg="white")
 
 
 
