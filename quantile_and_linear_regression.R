@@ -73,8 +73,9 @@ d_long <- d_long[d_long$VA <= 0, ]
 # 48465 eyes (23976 RE & 24489 LE)
 # Of which, 16390 eyes have hypertension;
 # 3018 eyes have diabetes;
+# 1751 eyes have myocardial ischaemia;
 # 1208 eyes have myocardial infarction.
-# Together, they represent 17964 (84.2%) out of 21335 removals 
+# Together, they represent 18232 (85.5%) out of 21335 removals 
 d_long <- d_long[rowSums(d_long[,c(23:44,79)]) == 0, ] 
 
 ## Include participants with good ocular health 
@@ -288,4 +289,5 @@ ggplot(data=plot_coef, aes(x=taus, y=dummy_coef)) +
   scale_colour_discrete(labels= c("Corneal hysteresis (CH)", "Corneal resistance factor (CRF)")) +
   scale_fill_discrete(labels= c("Corneal hysteresis (CH)", "Corneal resistance factor (CRF)")) 
 ggsave("figures/cornea_biomechanics_qr.png", width=6, height=6.5, units="in", bg="white")
+
 
