@@ -4,6 +4,7 @@
 ################################################################################
 
 library(dplyr)
+library(lindia)
 library(quantreg)
 library(vctrs)
 library(ggplot2)
@@ -134,11 +135,10 @@ vif(CRF_lm)
 cor.test(d$CH, d$CRF)
 
 ############################# Residual analysis: diagnostic plots ###########################
-my_theme <- theme_blank() + theme(plot.subtitle=element_text(size=10, hjust=1),
+my_theme <- theme_blank() + theme(plot.subtitle=element_text(size=5, hjust=1),
                                   panel.grid.major=element_line(color="gray94", linewidth=0.3),
                                   axis.text=element_text(size=7.5),
-                                  axis.title=element_text(size=8),
-                                  plot.subtitle=element_text(size=5)) 
+                                  axis.title=element_text(size=8)) 
 ## Normal Q-Q plot
 # CH
 p1 <- gg_qqplot(CH_lm, scale.factor=0.6) + 
@@ -194,11 +194,11 @@ n_taus <- length(taus)
 
 # CH model
 CH_model <- rq(SER ~ scale(CH) + scale(meanCornealRadius) + scale(IOP) + scale(age) + factor(sex), 
-               tau = taus, 
+               tau  = taus, 
                data = d) 
 # CRF model
 CRF_model <- rq(SER ~ scale(CRF) + scale(meanCornealRadius) + scale(IOP) + scale(age) + factor(sex), 
-                tau = taus, 
+                tau  = taus, 
                 data = d) 
 
 ## Internal function: extract refractive quantiles (taus), beta coefficients, 
@@ -290,4 +290,27 @@ ggplot(data=plot_coef, aes(x=taus, y=dummy_coef)) +
   scale_fill_discrete(labels= c("Corneal hysteresis (CH)", "Corneal resistance factor (CRF)")) 
 ggsave("figures/cornea_biomechanics_qr.png", width=6, height=6.5, units="in", bg="white")
 
+######################## Sensitivity analysis ############################
+## 747 eyes have ocular hypertension (IOP>21mmHg in the absence of glaucoma) 
+paste("IOP>21mmHg (ocular hypertension) in", sum(d$IOP>21), "eyes")
+## Remove these eyes and repeat quantile regression (resultant N=9741)
+sensitivity_analysis_d <- subset(d, IOP<=21)
+## Quantile regression
+# CH model
+CH_model <- rq(SER ~ scale(CH) + scale(meanCornealRadius) + scale(IOP) + scale(age) + factor(sex), 
+               tau  = taus, 
+               data = sensitivity_analysis_d) 
+# CRF model
+CRF_model <- rq(SER ~ scale(CRF) + scale(meanCornealRadius) + scale(IOP) + scale(age) + factor(sex), 
+                tau  = taus, 
+                data = sensitivity_analysis_d) 
+## Extract results
+CH_df  <- extract_results(summary(CH_model), "CH" )
+CRF_df <- extract_results(summary(CRF_model), "CRF" )
+combined_df <- rbind(CH_df, CRF_df)
+results_df <- filter(combined_df, variables %in% c("CH", "CRF"))
+results_df$SER <- NA
+results_df[which(results_df$variables=="CH"),]$SER <- combined_df[1:49,]$coef
+results_df[which(results_df$variables=="CRF"),]$SER <- combined_df[295:343,]$coef
+results_df$SER <- round(results_df$SER,2)
 
