@@ -3,5 +3,5 @@
 
 ### Citation
 ```
-Yii F, Strang N, Bernabeu MO, Dhillon D, MacGillivray T. Corneal biomechanics are not exclusively compromised in high myopia. Ophthalmic Physiol Opt. 2024; in press.
+Yii F, Strang N, Bernabeu MO, Dhillon D, MacGillivray T. Corneal biomechanics are not exclusively compromised in high myopia. Ophthalmic Physiol Opt. Epub 2024 Apr. Available from: https://doi.org/10.1111/opo.13313
 ```
