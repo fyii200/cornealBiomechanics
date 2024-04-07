@@ -176,9 +176,9 @@ ggarrange(p1, p3,
 # Save diagnostic plots
 ggsave("figures/cornea_biomechanics_lm_residual.png", width=9, height=5.5, units="in", bg="white")
 
-# ####   Combined (CH and CRF) diagnostic plots       ####
-# # Very strong correlation between (pearson's r: 0.85), #
-# # so the diagnostic plots are similar for both models. #
+# ####        Combined (CH and CRF) diagnostic plots           ####
+# # Very strong correlation between CH & CRF (pearson's r: 0.85), #
+# # so the diagnostic plots are similar for both models.          #
 # ggarrange(p1, p3, p2, p4, hjust=-0.05,
 #           ncol = 2, nrow = 2,
 #           font.label = list(size=12),
